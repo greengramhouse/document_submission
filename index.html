@@ -632,61 +632,96 @@
        console.log("เอกสารที่เลือก: ", selectedDocsDetails);
         console.log("ลายเซ็น: ", imageData);
 
-        const flexshowmessage = {
-          type: "flex",
-          altText: "รายการเอกสารที่รับแล้ว",
-          contents: {
-            type: "bubble",
-            header: {
-              type: "box",
-              layout: "vertical",
-              contents: [
-                {
-                  type: "text",
-                  text: "รายการเอกสารที่รับ",
-                  weight: "bold",
-                  size: "lg",
-                },
-              ],
-            },
-            body: {
-              type: "box",
-              layout: "vertical",
-              contents: selectedDocsDetails.map((doc) => ({
-                type: "box",
-                layout: "horizontal",
-                contents: [
-                  {
-                    type: "text",
-                    text: doc.docname || "ไม่ระบุ",
-                    size: "sm",
-                    flex: 4,
-                    wrap: true,
-                  },
-                  {
-                    type: "text",
-                    text: new Date(doc.created_at).toLocaleDateString("th-TH"),
-                    size: "sm",
-                    flex: 2,
-                    align: "end",
-                  },
-                ],
-              })),
-            },
-            footer: {
-              type: "box",
-              layout: "vertical",
-              contents: [
-                {
-                  type: "image",
-                  url: "https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg?semt=ais_hybrid&w=740",
-                  size: "full",
-                  aspectMode: "fit",
-                },
-              ],
-            },
+        const flexshowmessage = const flexshowmessage = {
+  type: "flex",
+  altText: "รายการเอกสารที่รับแล้ว",
+  contents: {
+    type: "bubble",
+    size: "mega",
+    header: {
+      type: "box",
+      layout: "vertical",
+      contents: [
+        {
+          type: "text",
+          text: "📄 เอกสารที่รับแล้ว",
+          weight: "bold",
+          size: "xl",
+          color: "#1DB446",
+          align: "center"
+        },
+        {
+          type: "text",
+          text: `จำนวน ${selectedDocsDetails.length} รายการ`,
+          size: "sm",
+          color: "#888888",
+          align: "center",
+          margin: "sm"
+        }
+      ]
+    },
+    body: {
+      type: "box",
+      layout: "vertical",
+      spacing: "md",
+      contents: selectedDocsDetails.map((doc, index) => ({
+        type: "box",
+        layout: "vertical",
+        margin: "md",
+        paddingAll: "12px",
+        backgroundColor: "#F8F8F8",
+        cornerRadius: "md",
+        contents: [
+          {
+            type: "text",
+            text: `#${index + 1} : ${doc.title || "-"}`,
+            weight: "bold",
+            size: "md",
+            wrap: true,
+            color: "#333333"
           },
-        };
+          {
+            type: "text",
+            text: `🆔 รหัส: ${doc.submission_id || "-"}`,
+            size: "sm",
+            color: "#555555",
+            wrap: true,
+            margin: "sm"
+          },
+          {
+            type: "text",
+            text: `🗓 วันที่: ${new Date(doc.created_at).toLocaleDateString("th-TH")}`,
+            size: "sm",
+            color: "#555555",
+            margin: "sm"
+          },
+          {
+            type: "text",
+            text: `📝 หมายเหตุ: ${doc.note || "-"}`,
+            size: "sm",
+            color: "#777777",
+            wrap: true,
+            margin: "sm"
+          }
+        ]
+      }))
+    },
+    footer: {
+      type: "box",
+      layout: "vertical",
+      contents: [
+        {
+          type: "text",
+          text: "✅ ขอบคุณที่ใช้บริการ",
+          size: "sm",
+          color: "#AAAAAA",
+          align: "center",
+          margin: "md"
+        }
+      ]
+    }
+  }
+};
 
         try {
             if (liff.isInClient()) {
