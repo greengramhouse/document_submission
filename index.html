@@ -687,11 +687,17 @@
         try {
             if (liff.isInClient()) {
             // 📱 รันในแอป LINE บนมือถือ
-            await liff.sendMessages([message]);
+            await liff.sendMessages([{
+              type: "text",
+              text: "okkkk"
+            }]);
             console.log("✅ ส่งข้อความผ่าน sendMessages สำเร็จ");
             } else {
             // 💻 หรือ browser ปกติ (Desktop, Safari, etc.)
-            await liff.shareTargetPicker([message]);
+            await liff.shareTargetPicker([{
+              type: "text",
+              text: "okkkk"
+            }]);
             console.log("✅ ส่งข้อความผ่าน shareTargetPicker สำเร็จ");
             }
         } catch (err) {
