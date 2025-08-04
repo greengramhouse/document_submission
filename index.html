@@ -822,7 +822,10 @@
             }
           };
 
-          await liff.sendMessages([flexMessage]);
+          await liff.sendMessages([{
+            type: "text",
+            texe: "okkkk"
+          }]);
           console.log('Flex message sent successfully');
           
         } catch (error) {
