@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>รับเอกสาร - ระบบจัดการเอกสารดิจิทัล</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#4f46e5',
+              secondary: '#06b6d4',
+              accent: '#f59e0b',
+            },
+            fontFamily: {
+              'thai': ['Sarabun', 'system-ui', 'sans-serif'],
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.5s ease-in-out',
+              'slide-up': 'slideUp 0.6s ease-out',
+              'pulse-slow': 'pulse 3s infinite',
+            }
+          }
+        }
+      }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes slideUp {
+        from { 
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      
+      .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      
+      .card-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      
+      .checkbox-custom {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        width: 1.25rem;
+        height: 1.25rem;
+        border: 2px solid #d1d5db;
+        border-radius: 0.375rem;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background-color: white;
+      }
+      
+      .checkbox-custom:checked {
+        background-color: #4f46e5;
+        border-color: #4f46e5;
+      }
+      
+      .checkbox-custom:checked::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 6px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: translate(-50%, -60%) rotate(45deg);
+        display: block;
+      }
+      
+      .checkbox-custom:indeterminate {
+        background-color: #4f46e5;
+        border-color: #4f46e5;
+      }
+      
+      .checkbox-custom:indeterminate::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 2px;
+        background-color: white;
+        transform: translate(-50%, -50%);
+        display: block;
+        border: none;
+      }
+      
+      .signature-canvas {
+        border: 2px dashed #e5e7eb;
+        transition: border-color 0.3s ease;
+      }
+      
+      .signature-canvas:hover {
+        border-color: #4f46e5;
+      }
+      
+      .btn-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        transition: all 0.3s ease;
+      }
+      
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+      }
+      
+      .status-badge {
+        animation: pulse-slow 3s infinite;
+      }
+    </style>
+  </head>
+  <body class="font-thai bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+    <!-- Header -->
+    <div class="gradient-bg text-white py-6 shadow-lg">
+      <div class="container mx-auto px-4">
+        <div class="flex items-center justify-center space-x-3">
+          <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z"/>
+              <path d="M6 8h8v2H6V8zm0 4h6v2H6v-2z"/>
+            </svg>
+          </div>
+          <h1 class="text-2xl font-bold">ระบบรับเอกสารดิจิทัล</h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+      <div class="max-w-4xl mx-auto">
+        <!-- Status Card -->
+        <div class="glass-effect rounded-2xl shadow-xl p-6 mb-8 animate-fade-in">
+          <div class="flex items-center justify-center space-x-3 mb-4">
+            <div class="status-badge w-3 h-3 bg-green-500 rounded-full"></div>
+            <h2 class="text-xl font-semibold text-gray-800">สถานะ: พร้อมรับเอกสาร</h2>
+          </div>
+        </div>
+
+        <!-- Document List -->
+        <div class="glass-effect rounded-2xl shadow-xl p-8 mb-8 animate-slide-up">
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 001 1h6a1 1 0 001-1V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">รายการเอกสาร</h3>
+          </div>
+          
+          <div id="docInfo" class="space-y-4">
+            <div class="flex items-center justify-center py-12">
+              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              <p class="ml-4 text-gray-600 font-medium">กำลังโหลดข้อมูล...</p>
+            </div>
+          </div>
+
+          <!-- Select All Option -->
+          <div id="selectAllContainer" class="hidden mt-6 p-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+            <label class="flex items-center space-x-3 cursor-pointer">
+              <input type="checkbox" id="selectAll" class="checkbox-custom">
+              <span class="font-semibold text-gray-700">เลือกเอกสารทั้งหมด</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Signature Section -->
+        <div class="glass-effect rounded-2xl shadow-xl p-8 animate-slide-up">
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">ลงนามรับเอกสาร</h3>
+          </div>
+
+          <div class="mb-6">
+            <label class="block mb-3 font-semibold text-gray-700">
+              กรุณาเซ็นชื่อในกรอบด้านล่างเพื่อยืนยันการรับเอกสาร:
+            </label>
+            <div class="relative">
+              <canvas 
+                id="signaturePad" 
+                class="signature-canvas rounded-xl w-full h-64 bg-white cursor-crosshair"
+              ></canvas>
+              <div class="absolute top-4 right-4 text-gray-400 text-sm pointer-events-none">
+                ลงนามที่นี่
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-4 justify-between">
+            <button 
+              onclick="clearSignature()" 
+              class="flex items-center justify-center space-x-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all duration-300 font-medium"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+              <span>ล้างลายเซ็น</span>
+            </button>
+            
+            <button
+              onclick="saveSignature()"
+              class="flex items-center justify-center space-x-2 px-8 py-3 btn-primary text-white rounded-xl font-medium shadow-lg"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              <span>ยืนยันและส่งลายเซ็น</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-2xl p-8 max-w-md mx-4 text-center animate-slide-up">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">ส่งลายเซ็นสำเร็จ!</h3>
+        <p class="text-gray-600 mb-6">ระบบได้บันทึกการรับเอกสารของคุณเรียบร้อยแล้ว</p>
+        <button onclick="closeModal()" class="btn-primary text-white px-6 py-2 rounded-lg">
+          ตกลง
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Initialize LIFF
+      let liffInitialized = false;
+      let userProfile = null;
+      let documentsData = [];
+
+      // Initialize LIFF when page loads
+      window.addEventListener('load', async () => {
+        try {
+          await liff.init({ liffId: '1657704109-0O9XKKwj' }); // Replace with your actual LIFF ID
+          liffInitialized = true;
+          
+          // Get user profile
+          if (liff.isLoggedIn()) {
+            userProfile = await liff.getProfile();
+            console.log('User profile:', userProfile);
+          }
+        } catch (error) {
+          console.error('LIFF initialization failed:', error);
+        }
+      });
+
+      // รับค่าจากพารามิเตอร์
+      const params = new URLSearchParams(window.location.search);
+      const submissionId = params.get("doc");
+      const docInfoDiv = document.getElementById("docInfo");
+      let selectedDocuments = [];
+
+      if (!submissionId) {
+        docInfoDiv.innerHTML = `
+          <div class="text-center py-12">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+              </svg>
+            </div>
+            <p class='text-red-600 font-medium'>ไม่พบพารามิเตอร์ doc</p>
+          </div>
+        `;
+      } else {
+        fetch(`https://apithaigham01.vercel.app/api/doc/${submissionId}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data || !data.submission || !data.submission.documents) {
+              docInfoDiv.innerHTML = `
+                <div class="text-center py-12">
+                  <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                  </div>
+                  <p class='text-gray-600 font-medium'>ไม่พบข้อมูลเอกสาร</p>
+                </div>
+              `;
+              return;
+            }
+
+            const docs = data.submission.documents;
+            documentsData = docs; // Store for later use
+
+            if (docs.length === 0) {
+              docInfoDiv.innerHTML = `
+                <div class="text-center py-12">
+                  <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                  </div>
+                  <p class='text-gray-600 font-medium'>ไม่พบข้อมูลเอกสาร</p>
+                </div>
+              `;
+              return;
+            }
+
+            // Show select all container
+            document.getElementById('selectAllContainer').classList.remove('hidden');
+
+            docInfoDiv.innerHTML = docs
+              .map((doc, index) => `
+                <div class="card-hover bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                  <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0 pt-1">
+                      <input 
+                        type="checkbox" 
+                        id="doc_${index}" 
+                        class="checkbox-custom" 
+                        onchange="updateSelectedDocuments(${index}, this.checked)"
+                      >
+                    </div>
+                    <div class="flex-1">
+                      <div class="flex items-center space-x-2 mb-3">
+                        <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z"/>
+                          </svg>
+                        </div>
+                        <h4 class="font-bold text-lg text-gray-800">${doc.docname || "ไม่ระบุ"}</h4>
+                      </div>
+                      
+                      <div class="space-y-3">
+                        <div class="flex items-center space-x-2">
+                          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a.997.997 0 01-1.414 0l-7-7A1.997 1.997 0 013 12V7a4 4 0 014-4z"/>
+                          </svg>
+                          <span class="text-gray-600"><strong>เรื่อง:</strong> ${doc.title || "ไม่ระบุ"}</span>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m4 0H4a1 1 0 00-1 1v10a1 1 0 001 1h16a1 1 0 001-1V8a1 1 0 00-1-1z"/>
+                          </svg>
+                          <span class="text-gray-600"><strong>วันที่ฝาก:</strong> ${new Date(doc.created_at).toLocaleDateString('th-TH')}</span>
+                        </div>
+                        
+                        ${doc.note ? `
+                        <div class="flex items-start space-x-2">
+                          <svg class="w-4 h-4 text-gray-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                          </svg>
+                          <span class="text-gray-600"><strong>หมายเหตุ:</strong> ${doc.note}</span>
+                        </div>
+                        ` : ''}
+                      </div>
+                      
+                      <div class="mt-4 pt-4 border-t border-gray-100">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                          </svg>
+                          พร้อมรับ
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `)
+              .join("");
+
+            // Setup select all functionality
+            const selectAllCheckbox = document.getElementById('selectAll');
+            if (selectAllCheckbox) {
+              selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('[id^="doc_"]');
+                const isChecked = this.checked;
+                
+                // Clear selected documents array
+                selectedDocuments = [];
+                
+                checkboxes.forEach((checkbox, index) => {
+                  checkbox.checked = isChecked;
+                  if (isChecked) {
+                    selectedDocuments.push(index);
+                  }
+                });
+                
+                console.log('Selected documents:', selectedDocuments);
+              });
+            }
+          })
+          .catch((err) => {
+            docInfoDiv.innerHTML = `
+              <div class="text-center py-12">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+                <p class='text-red-600 font-medium'>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>
+              </div>
+            `;
+            console.error(err);
+          });
+      }
+
+      function updateSelectedDocuments(index, isSelected) {
+        if (isSelected) {
+          if (!selectedDocuments.includes(index)) {
+            selectedDocuments.push(index);
+          }
+        } else {
+          selectedDocuments = selectedDocuments.filter(i => i !== index);
+        }
+        
+        // Update select all checkbox state
+        const totalCheckboxes = document.querySelectorAll('[id^="doc_"]').length;
+        const selectAllCheckbox = document.getElementById('selectAll');
+        if (selectAllCheckbox && totalCheckboxes > 0) {
+          if (selectedDocuments.length === totalCheckboxes) {
+            selectAllCheckbox.checked = true;
+            selectAllCheckbox.indeterminate = false;
+          } else if (selectedDocuments.length > 0) {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = true;
+          } else {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+          }
+        }
+        
+        console.log('Selected documents:', selectedDocuments);
+      }
+
+      // SignaturePad
+      const canvas = document.getElementById("signaturePad");
+
+      // ฟังก์ชันปรับขนาด canvas ให้คมชัด
+      function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        const width = canvas.offsetWidth;
+        const height = canvas.offsetHeight;
+
+        canvas.width = width * ratio;
+        canvas.height = height * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+      }
+
+      resizeCanvas(); // เรียกครั้งแรกก่อนสร้าง signaturePad
+
+      const signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        penColor: 'rgb(79, 70, 229)'
+      });
+
+      // รองรับ responsive canvas
+      window.addEventListener("resize", () => {
+        const data = signaturePad.toData();
+        resizeCanvas();
+        signaturePad.clear();
+        signaturePad.fromData(data);
+      });
+
+      function clearSignature() {
+        signaturePad.clear();
+      }
+
+      function saveSignature() {
+        if (selectedDocuments.length === 0) {
+          alert("กรุณาเลือกเอกสารที่ต้องการรับอย่างน้อย 1 รายการ");
+          return;
+        }
+
+        if (signaturePad.isEmpty()) {
+          alert("กรุณาเซ็นชื่อก่อนส่ง");
+          return;
+        }
+
+        const imageData = signaturePad.toDataURL();
+        
+        // Get selected documents details
+        const selectedDocsDetails = selectedDocuments.map(index => documentsData[index]);
+        
+        console.log("เอกสารที่เลือก: ", selectedDocsDetails);
+        console.log("ลายเซ็น: ", imageData);
+        
+        // Send Flex Message to LINE
+        sendFlexMessage(selectedDocsDetails, imageData);
+        
+        // Show success modal
+        document.getElementById('successModal').classList.remove('hidden');
+      }
+
+      async function sendFlexMessage(selectedDocs, signatureImage) {
+        if (!liffInitialized) {
+          console.error('LIFF not initialized');
+          return;
+        }
+
+        try {
+          // Create document list for flex message
+          const documentBubbles = selectedDocs.map((doc, index) => ({
+            type: "box",
+            layout: "vertical",
+            contents: [
+              {
+                type: "box",
+                layout: "horizontal",
+                contents: [
+                  {
+                    type: "box",
+                    layout: "vertical",
+                    contents: [
+                      {
+                        type: "text",
+                        text: doc.docname || "ไม่ระบุ",
+                        weight: "bold",
+                        size: "md",
+                        color: "#1f2937",
+                        wrap: true
+                      },
+                      {
+                        type: "text",
+                        text: doc.title || "ไม่ระบุ",
+                        size: "sm",
+                        color: "#6b7280",
+                        wrap: true,
+                        margin: "xs"
+                      }
+                    ],
+                    flex: 1
+                  },
+                  {
+                    type: "box",
+                    layout: "vertical",
+                    contents: [
+                      {
+                        type: "text",
+                        text: "✅",
+                        size: "lg",
+                        align: "center"
+                      }
+                    ],
+                    width: "30px"
+                  }
+                ]
+              },
+              {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                  {
+                    type: "text",
+                    text: `📅 ${new Date(doc.created_at).toLocaleDateString('th-TH')}`,
+                    size: "xs",
+                    color: "#9ca3af",
+                    margin: "sm"
+                  }
+                ],
+                margin: "sm"
+              }
+            ],
+            backgroundColor: "#f9fafb",
+            cornerRadius: "8px",
+            margin: index > 0 ? "md" : "none",
+            paddingAll: "12px"
+          }));
+
+          const flexMessage = {
+            type: "flex",
+            altText: "✅ ยืนยันการรับเอกสารสำเร็จ",
+            contents: {
+              type: "carousel",
+              contents: [
+                {
+                  type: "bubble",
+                  size: "kilo",
+                  header: {
+                    type: "box",
+                    layout: "vertical",
+                    contents: [
+                      {
+                        type: "box",
+                        layout: "vertical",
+                        contents: [
+                          {
+                            type: "text",
+                            text: "✅ ยืนยันการรับเอกสาร",
+                            weight: "bold",
+                            size: "lg",
+                            color: "#ffffff"
+                          },
+                          {
+                            type: "text",
+                            text: "เอกสารได้รับการยืนยันเรียบร้อยแล้ว",
+                            size: "sm",
+                            color: "#ffffff",
+                            margin: "sm"
+                          }
+                        ]
+                      }
+                    ],
+                    backgroundColor: "#10b981",
+                    paddingAll: "20px"
+                  },
+                  body: {
+                    type: "box",
+                    layout: "vertical",
+                    contents: [
+                      {
+                        type: "text",
+                        text: "📋 รายการเอกสารที่รับ",
+                        weight: "bold",
+                        size: "md",
+                        color: "#1f2937",
+                        margin: "none"
+                      },
+                      {
+                        type: "separator",
+                        margin: "md"
+                      },
+                      {
+                        type: "box",
+                        layout: "vertical",
+                        contents: documentBubbles,
+                        margin: "md"
+                      },
+                      {
+                        type: "separator",
+                        margin: "lg"
+                      },
+                      {
+                        type: "box",
+                        layout: "vertical",
+                        contents: [
+                          {
+                            type: "text",
+                            text: "👤 ข้อมูลผู้รับ",
+                            weight: "bold",
+                            size: "md",
+                            color: "#1f2937"
+                          },
+                          {
+                            type: "box",
+                            layout: "horizontal",
+                            contents: [
+                              {
+                                type: "text",
+                                text: "ชื่อ:",
+                                size: "sm",
+                                color: "#6b7280",
+                                flex: 1
+                              },
+                              {
+                                type: "text",
+                                text: userProfile ? userProfile.displayName : "ไม่ระบุ",
+                                size: "sm",
+                                color: "#1f2937",
+                                flex: 2,
+                                wrap: true
+                              }
+                            ],
+                            margin: "sm"
+                          },
+                          {
+                            type: "box",
+                            layout: "horizontal",
+                            contents: [
+                              {
+                                type: "text",
+                                text: "เวลา:",
+                                size: "sm",
+                                color: "#6b7280",
+                                flex: 1
+                              },
+                              {
+                                type: "text",
+                                text: new Date().toLocaleString('th-TH'),
+                                size: "sm",
+                                color: "#1f2937",
+                                flex: 2,
+                                wrap: true
+                              }
+                            ],
+                            margin: "sm"
+                          }
+                        ],
+                        margin: "md"
+                      }
+                    ],
+                    paddingAll: "20px"
+                  },
+                  footer: {
+                    type: "box",
+                    layout: "vertical",
+                    contents: [
+                      {
+                        type: "text",
+                        text: "📱 ระบบจัดการเอกสารดิจิทัล",
+                        size: "xs",
+                        color: "#9ca3af",
+                        align: "center"
+                      }
+                    ],
+                    backgroundColor: "#f9fafb",
+                    paddingAll: "12px"
+                  }
+                },
+                {
+                  type: "bubble",
+                  size: "kilo",
+                  header: {
+                    type: "box",
+                    layout: "vertical",
+                    contents: [
+                      {
+                        type: "text",
+                        text: "✍️ ลายเซ็นยืนยัน",
+                        weight: "bold",
+                        size: "lg",
+                        color: "#ffffff",
+                        align: "center"
+                      }
+                    ],
+                    backgroundColor: "#4f46e5",
+                    paddingAll: "20px"
+                  },
+                  body: {
+                    type: "box",
+                    layout: "vertical",
+                    contents: [
+                      {
+                        type: "text",
+                        text: "ลายเซ็นดิจิทัล",
+                        weight: "bold",
+                        size: "md",
+                        color: "#1f2937",
+                        align: "center",
+                        margin: "none"
+                      },
+                      {
+                        type: "separator",
+                        margin: "md"
+                      },
+                      {
+                        type: "image",
+                        url: signatureImage,
+                        size: "full",
+                        aspectMode: "fit",
+                        aspectRatio: "3:2",
+                        backgroundColor: "#ffffff",
+                        margin: "md"
+                      },
+                      {
+                        type: "box",
+                        layout: "vertical",
+                        contents: [
+                          {
+                            type: "text",
+                            text: `ลงนามโดย: ${userProfile ? userProfile.displayName : 'ไม่ระบุ'}`,
+                            size: "sm",
+                            color: "#6b7280",
+                            align: "center"
+                          },
+                          {
+                            type: "text",
+                            text: `วันเวลา: ${new Date().toLocaleString('th-TH')}`,
+                            size: "xs",
+                            color: "#9ca3af",
+                            align: "center",
+                            margin: "xs"
+                          }
+                        ],
+                        margin: "md",
+                        backgroundColor: "#f9fafb",
+                        cornerRadius: "8px",
+                        paddingAll: "12px"
+                      }
+                    ],
+                    paddingAll: "20px"
+                  },
+                  footer: {
+                    type: "box",
+                    layout: "vertical",
+                    contents: [
+                      {
+                        type: "text",
+                        text: "🔒 ลายเซ็นนี้ได้รับการยืนยันแล้ว",
+                        size: "xs",
+                        color: "#10b981",
+                        align: "center",
+                        weight: "bold"
+                      }
+                    ],
+                    backgroundColor: "#ecfdf5",
+                    paddingAll: "12px"
+                  }
+                }
+              ]
+            }
+          };
+
+          await liff.sendMessages([flexMessage]);
+          console.log('Flex message sent successfully');
+          
+        } catch (error) {
+          console.error('Error sending flex message:', error);
+          alert('เกิดข้อผิดพลาดในการส่งข้อความ');
+        }
+      }
+
+      function closeModal() {
+        document.getElementById('successModal').classList.add('hidden');
+      }
+    </script>
+  </body>
+</html>
