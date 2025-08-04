@@ -624,11 +624,13 @@
         }
 
         const imageData = signaturePad.toDataURL();
+        
         const selectedDocsDetails = selectedDocuments.map(
           (index) => documentsData[index]
         );
 
-        console.log(selectedDocuments)
+       console.log("เอกสารที่เลือก: ", selectedDocsDetails);
+        console.log("ลายเซ็น: ", imageData);
 
         const message = {
           type: "flex",
