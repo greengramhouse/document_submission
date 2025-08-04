@@ -632,7 +632,7 @@
        console.log("เอกสารที่เลือก: ", selectedDocsDetails);
         console.log("ลายเซ็น: ", imageData);
 
-        const flexshowmessage = {
+const flexshowmessage = {
   type: "flex",
   altText: "รายการเอกสารที่รับแล้ว",
   contents: {
@@ -663,48 +663,52 @@
     body: {
       type: "box",
       layout: "vertical",
-      spacing: "md",
-      contents: selectedDocsDetails.map((doc, index) => ({
-        type: "box",
-        layout: "vertical",
-        margin: "md",
-        paddingAll: "12px",
-        backgroundColor: "#F8F8F8",
-        cornerRadius: "md",
-        contents: [
-          {
-            type: "text",
-            text: `#${index + 1} : ${doc.title || "-"}`,
-            weight: "bold",
-            size: "md",
-            wrap: true,
-            color: "#333333"
-          },
-          {
-            type: "text",
-            text: `🆔 รหัส: ${doc.submission_id || "-"}`,
-            size: "sm",
-            color: "#555555",
-            wrap: true,
-            margin: "sm"
-          },
-          {
-            type: "text",
-            text: `🗓 วันที่: ${new Date(doc.created_at).toLocaleDateString("th-TH")}`,
-            size: "sm",
-            color: "#555555",
-            margin: "sm"
-          },
-          {
-            type: "text",
-            text: `📝 หมายเหตุ: ${doc.note || "-"}`,
-            size: "sm",
-            color: "#777777",
-            wrap: true,
-            margin: "sm"
-          }
-        ]
-      }))
+      spacing: "sm",
+      contents: selectedDocsDetails.flatMap((doc, index) => [
+        {
+          type: "box",
+          layout: "vertical",
+          paddingAll: "12px",
+          backgroundColor: "#F9F9F9",
+          cornerRadius: "md",
+          contents: [
+            {
+              type: "text",
+              text: `#${index + 1} : ${doc.title || "-"}`,
+              weight: "bold",
+              size: "md",
+              wrap: true,
+              color: "#333333"
+            },
+            {
+              type: "text",
+              text: `🆔 รหัส: ${doc.submission_id || "-"}`,
+              size: "sm",
+              color: "#555555",
+              wrap: true,
+              margin: "sm"
+            },
+            {
+              type: "text",
+              text: `🗓 วันที่: ${new Date(doc.created_at).toLocaleDateString("th-TH")}`,
+              size: "sm",
+              color: "#555555",
+              margin: "sm"
+            },
+            {
+              type: "text",
+              text: `📝 หมายเหตุ: ${doc.note || "-"}`,
+              size: "sm",
+              color: "#777777",
+              wrap: true,
+              margin: "sm"
+            }
+          ]
+        },
+        ...(index < selectedDocsDetails.length - 1
+          ? [{ type: "separator", margin: "md" }]
+          : [])
+      ])
     },
     footer: {
       type: "box",
@@ -722,6 +726,7 @@
     }
   }
 };
+
 
         try {
             if (liff.isInClient()) {
