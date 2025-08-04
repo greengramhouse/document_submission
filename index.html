@@ -496,342 +496,101 @@
         signaturePad.clear();
       }
 
-      function saveSignature() {
-        if (selectedDocuments.length === 0) {
-          alert("กรุณาเลือกเอกสารที่ต้องการรับอย่างน้อย 1 รายการ");
-          return;
-        }
+async function saveSignature() {
+  if (selectedDocuments.length === 0) {
+    alert("กรุณาเลือกเอกสารที่ต้องการรับอย่างน้อย 1 รายการ");
+    return;
+  }
 
-        if (signaturePad.isEmpty()) {
-          alert("กรุณาเซ็นชื่อก่อนส่ง");
-          return;
-        }
+  if (signaturePad.isEmpty()) {
+    alert("กรุณาเซ็นชื่อก่อนส่ง");
+    return;
+  }
 
-        const imageData = signaturePad.toDataURL();
-        
-        // Get selected documents details
-        const selectedDocsDetails = selectedDocuments.map(index => documentsData[index]);
-        
-        console.log("เอกสารที่เลือก: ", selectedDocsDetails);
-        console.log("ลายเซ็น: ", imageData);
-        
-        // Send Flex Message to LINE
-        // sendFlexMessage(selectedDocsDetails, imageData);
-        
-        // Show success modal
-        document.getElementById('successModal').classList.remove('hidden');
-      }
+  const imageData = signaturePad.toDataURL();
+  const selectedDocsDetails = selectedDocuments.map(index => documentsData[index]);
 
-      async function sendFlexMessage(selectedDocs, signatureImage) {
-        if (!liffInitialized) {
-          console.error('LIFF not initialized');
-          return;
-        }
-
-        try {
-          // Create document list for flex message
-          const documentBubbles = selectedDocs.map((doc, index) => ({
-            type: "box",
-            layout: "vertical",
-            contents: [
-              {
-                type: "box",
-                layout: "horizontal",
-                contents: [
-                  {
-                    type: "box",
-                    layout: "vertical",
-                    contents: [
-                      {
-                        type: "text",
-                        text: doc.docname || "ไม่ระบุ",
-                        weight: "bold",
-                        size: "md",
-                        color: "#1f2937",
-                        wrap: true
-                      },
-                      {
-                        type: "text",
-                        text: doc.title || "ไม่ระบุ",
-                        size: "sm",
-                        color: "#6b7280",
-                        wrap: true,
-                        margin: "xs"
-                      }
-                    ],
-                    flex: 1
-                  },
-                  {
-                    type: "box",
-                    layout: "vertical",
-                    contents: [
-                      {
-                        type: "text",
-                        text: "✅",
-                        size: "lg",
-                        align: "center"
-                      }
-                    ],
-                    width: "30px"
-                  }
-                ]
-              },
-              {
-                type: "box",
-                layout: "vertical",
-                contents: [
-                  {
-                    type: "text",
-                    text: `📅 ${new Date(doc.created_at).toLocaleDateString('th-TH')}`,
-                    size: "xs",
-                    color: "#9ca3af",
-                    margin: "sm"
-                  }
-                ],
-                margin: "sm"
-              }
-            ],
-            backgroundColor: "#f9fafb",
-            cornerRadius: "8px",
-            margin: index > 0 ? "md" : "none",
-            paddingAll: "12px"
-          }));
-
-          const flexMessage = {
-            type: "flex",
-            altText: "✅ ยืนยันการรับเอกสารสำเร็จ",
-            contents: {
-              type: "carousel",
-              contents: [
-                {
-                  type: "bubble",
-                  size: "kilo",
-                  header: {
-                    type: "box",
-                    layout: "vertical",
-                    contents: [
-                      {
-                        type: "box",
-                        layout: "vertical",
-                        contents: [
-                          {
-                            type: "text",
-                            text: "✅ ยืนยันการรับเอกสาร",
-                            weight: "bold",
-                            size: "lg",
-                            color: "#ffffff"
-                          },
-                          {
-                            type: "text",
-                            text: "เอกสารได้รับการยืนยันเรียบร้อยแล้ว",
-                            size: "sm",
-                            color: "#ffffff",
-                            margin: "sm"
-                          }
-                        ]
-                      }
-                    ],
-                    backgroundColor: "#10b981",
-                    paddingAll: "20px"
-                  },
-                  body: {
-                    type: "box",
-                    layout: "vertical",
-                    contents: [
-                      {
-                        type: "text",
-                        text: "📋 รายการเอกสารที่รับ",
-                        weight: "bold",
-                        size: "md",
-                        color: "#1f2937",
-                        margin: "none"
-                      },
-                      {
-                        type: "separator",
-                        margin: "md"
-                      },
-                      {
-                        type: "box",
-                        layout: "vertical",
-                        contents: documentBubbles,
-                        margin: "md"
-                      },
-                      {
-                        type: "separator",
-                        margin: "lg"
-                      },
-                      {
-                        type: "box",
-                        layout: "vertical",
-                        contents: [
-                          {
-                            type: "text",
-                            text: "👤 ข้อมูลผู้รับ",
-                            weight: "bold",
-                            size: "md",
-                            color: "#1f2937"
-                          },
-                          {
-                            type: "box",
-                            layout: "horizontal",
-                            contents: [
-                              {
-                                type: "text",
-                                text: "ชื่อ:",
-                                size: "sm",
-                                color: "#6b7280",
-                                flex: 1
-                              },
-                              {
-                                type: "text",
-                                text: userProfile ? userProfile.displayName : "ไม่ระบุ",
-                                size: "sm",
-                                color: "#1f2937",
-                                flex: 2,
-                                wrap: true
-                              }
-                            ],
-                            margin: "sm"
-                          },
-                          {
-                            type: "box",
-                            layout: "horizontal",
-                            contents: [
-                              {
-                                type: "text",
-                                text: "เวลา:",
-                                size: "sm",
-                                color: "#6b7280",
-                                flex: 1
-                              },
-                              {
-                                type: "text",
-                                text: new Date().toLocaleString('th-TH'),
-                                size: "sm",
-                                color: "#1f2937",
-                                flex: 2,
-                                wrap: true
-                              }
-                            ],
-                            margin: "sm"
-                          }
-                        ],
-                        margin: "md"
-                      }
-                    ],
-                    paddingAll: "20px"
-                  },
-                  footer: {
-                    type: "box",
-                    layout: "vertical",
-                    contents: [
-                      {
-                        type: "text",
-                        text: "📱 ระบบจัดการเอกสารดิจิทัล",
-                        size: "xs",
-                        color: "#9ca3af",
-                        align: "center"
-                      }
-                    ],
-                    backgroundColor: "#f9fafb",
-                    paddingAll: "12px"
-                  }
-                },
-                {
-                  type: "bubble",
-                  size: "kilo",
-                  header: {
-                    type: "box",
-                    layout: "vertical",
-                    contents: [
-                      {
-                        type: "text",
-                        text: "✍️ ลายเซ็นยืนยัน",
-                        weight: "bold",
-                        size: "lg",
-                        color: "#ffffff",
-                        align: "center"
-                      }
-                    ],
-                    backgroundColor: "#4f46e5",
-                    paddingAll: "20px"
-                  },
-                  body: {
-                    type: "box",
-                    layout: "vertical",
-                    contents: [
-                      {
-                        type: "text",
-                        text: "ลายเซ็นดิจิทัล",
-                        weight: "bold",
-                        size: "md",
-                        color: "#1f2937",
-                        align: "center",
-                        margin: "none"
-                      },
-                      {
-                        type: "separator",
-                        margin: "md"
-                      },
-                      {
-                        type: "box",
-                        layout: "vertical",
-                        contents: [
-                          {
-                            type: "text",
-                            text: `ลงนามโดย: ${userProfile ? userProfile.displayName : 'ไม่ระบุ'}`,
-                            size: "sm",
-                            color: "#6b7280",
-                            align: "center"
-                          },
-                          {
-                            type: "text",
-                            text: `วันเวลา: ${new Date().toLocaleString('th-TH')}`,
-                            size: "xs",
-                            color: "#9ca3af",
-                            align: "center",
-                            margin: "xs"
-                          }
-                        ],
-                        margin: "md",
-                        backgroundColor: "#f9fafb",
-                        cornerRadius: "8px",
-                        paddingAll: "12px"
-                      }
-                    ],
-                    paddingAll: "20px"
-                  },
-                  footer: {
-                    type: "box",
-                    layout: "vertical",
-                    contents: [
-                      {
-                        type: "text",
-                        text: "🔒 ลายเซ็นนี้ได้รับการยืนยันแล้ว",
-                        size: "xs",
-                        color: "#10b981",
-                        align: "center",
-                        weight: "bold"
-                      }
-                    ],
-                    backgroundColor: "#ecfdf5",
-                    paddingAll: "12px"
-                  }
-                }
-              ]
+  const message = {
+    type: "flex",
+    altText: "รายการเอกสารที่รับแล้ว",
+    contents: {
+      type: "bubble",
+      header: {
+        type: "box",
+        layout: "vertical",
+        contents: [{
+          type: "text",
+          text: "รายการเอกสารที่รับ",
+          weight: "bold",
+          size: "lg"
+        }]
+      },
+      body: {
+        type: "box",
+        layout: "vertical",
+        contents: selectedDocsDetails.map(doc => ({
+          type: "box",
+          layout: "horizontal",
+          contents: [
+            {
+              type: "text",
+              text: doc.docname || "ไม่ระบุ",
+              size: "sm",
+              flex: 4,
+              wrap: true
+            },
+            {
+              type: "text",
+              text: new Date(doc.created_at).toLocaleDateString('th-TH'),
+              size: "sm",
+              flex: 2,
+              align: "end"
             }
-          };
+          ]
+        }))
+      },
+      footer: {
+        type: "box",
+        layout: "vertical",
+        contents: [{
+          type: "image",
+          url: imageData,
+          size: "full",
+          aspectMode: "fit"
+        }]
+      }
+    }
+  };
 
-          await liff.sendMessages([{
-            type: "text",
-            texe: "okkkk"
-          }]);
-          console.log('Flex message sent successfully');
-          
-        } catch (error) {
-          console.error('Error sending flex message:', error);
-          alert('เกิดข้อผิดพลาดในการส่งข้อความ');
-        }
+  try {
+    if (!liffInitialized) {
+      alert("LIFF ยังไม่ถูก initialize");
+      return;
+    }
+
+    // Check login state
+    if (!liff.isLoggedIn()) {
+      liff.login(); // redirect to login
+      return;
+    }
+
+    // Check if in LINE client
+    if (liff.isInClient()) {
+      await liff.sendMessages([message]);
+      document.getElementById('successModal').classList.remove('hidden');
+    } else {
+        const result = await liff.shareTargetPicker([message]);
+
+    }
+  } catch (err) {
+    console.error("เกิดข้อผิดพลาด:", err);
+    alert("เกิดข้อผิดพลาดในการส่งข้อความ");
+  }
+}
+
+
+      async function sendFlexMessage(selectedDocs) {
+
       }
 
       function closeModal() {
