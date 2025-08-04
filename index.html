@@ -679,7 +679,7 @@
               contents: [
                 {
                   type: "image",
-                  url: imageData,
+                  url: "https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg?semt=ais_hybrid&w=740",
                   size: "full",
                   aspectMode: "fit",
                 },
@@ -691,17 +691,11 @@
         try {
             if (liff.isInClient()) {
             // 📱 รันในแอป LINE บนมือถือ
-            await liff.sendMessages([{
-              type: "text",
-              text: "okkkk"
-            }]);
+            await liff.sendMessages([message]);
             console.log("✅ ส่งข้อความผ่าน sendMessages สำเร็จ");
             } else {
             // 💻 หรือ browser ปกติ (Desktop, Safari, etc.)
-            await liff.shareTargetPicker([{
-              type: "text",
-              text: "okkkk"
-            }]);
+            await liff.shareTargetPicker([message]);
             console.log("✅ ส่งข้อความผ่าน shareTargetPicker สำเร็จ");
             }
         } catch (err) {
