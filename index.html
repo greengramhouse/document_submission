@@ -733,10 +733,12 @@ const flexshowmessage = {
             // 📱 รันในแอป LINE บนมือถือ
             await liff.sendMessages([flexshowmessage]);
             console.log("✅ ส่งข้อความผ่าน sendMessages สำเร็จ");
+              liff.closeWindow() 
             } else {
             // 💻 หรือ browser ปกติ (Desktop, Safari, etc.)
             await liff.shareTargetPicker([flexshowmessage]);
             console.log("✅ ส่งข้อความผ่าน shareTargetPicker สำเร็จ");
+              liff.closeWindow() 
             }
         } catch (err) {
             console.error("❌ LINE Flex Message Error:", err);
