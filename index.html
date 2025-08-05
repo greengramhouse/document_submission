@@ -667,6 +667,11 @@ function setSatisfaction(level) {
           return;
         }
 
+        if (!satisfactionLevel) {
+          alert("กรุณาเลือกระดับความพึงพอใจก่อนส่ง");
+          return;
+        }
+
         const imageData = signaturePad.toDataURL();
         
         const selectedDocsDetails = selectedDocuments.map(
