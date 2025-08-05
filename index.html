@@ -482,7 +482,7 @@
                             <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z"/>
                           </svg>
                         </div>
-                        <h4 class="font-bold text-lg text-gray-800">${
+                        <h4 class="font-bold text-md text-gray-800">${
                           doc.docname || "ไม่ระบุ"
                         }</h4>
                       </div>
@@ -492,7 +492,7 @@
                           <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a.997.997 0 01-1.414 0l-7-7A1.997 1.997 0 013 12V7a4 4 0 014-4z"/>
                           </svg>
-                          <span class="text-gray-600"><strong>เรื่อง:</strong> ${
+                          <span class="text-gray-600 text-sm"><strong>เรื่อง:</strong> ${
                             doc.title || "ไม่ระบุ"
                           }</span>
                         </div>
@@ -501,7 +501,7 @@
                           <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m4 0H4a1 1 0 00-1 1v10a1 1 0 001 1h16a1 1 0 001-1V8a1 1 0 00-1-1z"/>
                           </svg>
-                          <span class="text-gray-600"><strong>วันที่ฝาก:</strong> ${new Date(
+                          <span class="text-gray-600 text-sm"><strong>วันที่ฝาก:</strong> ${new Date(
                             doc.created_at
                           ).toLocaleDateString("th-TH")}</span>
                         </div>
@@ -513,7 +513,7 @@
                           <svg class="w-4 h-4 text-gray-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                           </svg>
-                          <span class="text-gray-600"><strong>หมายเหตุ:</strong> ${doc.note}</span>
+                          <span class="text-gray-600 text-sm"><strong>หมายเหตุ:</strong> ${doc.note}</span>
                         </div>
                         `
                             : ""
