@@ -567,6 +567,30 @@
           });
       }
 
+let satisfactionLevel = "";
+
+function setSatisfaction(level) {
+  satisfactionLevel = level;
+  const textMap = {
+    excellent: "เยี่ยมยอดที่สุด",
+    average: "พอใช้",
+    poor: "ควรปรับปรุง"
+  };
+
+  document.getElementById("satisfaction-text").innerText =
+    `คุณเลือก: ${textMap[level]}`;
+
+  // ไฮไลต์ไอคอนที่เลือก
+  ["excellent", "average", "poor"].forEach((id) => {
+    document.getElementById(`smile-${id}`).classList.remove("opacity-30");
+  });
+  document.getElementById(`smile-excellent`).classList.add(level !== "excellent" ? "opacity-30" : "");
+  document.getElementById(`smile-average`).classList.add(level !== "average" ? "opacity-30" : "");
+  document.getElementById(`smile-poor`).classList.add(level !== "poor" ? "opacity-30" : "");
+}
+
+
+      
       function updateSelectedDocuments(index, isSelected) {
         if (isSelected) {
           if (!selectedDocuments.includes(index)) {
@@ -729,20 +753,36 @@ const flexshowmessage = {
           : [])
       ])
     },
-    footer: {
-      type: "box",
-      layout: "vertical",
-      contents: [
-        {
-          type: "text",
-          text: "✅ ขอบคุณที่ใช้บริการ",
-          size: "sm",
-          color: "#AAAAAA",
-          align: "center",
-          margin: "md"
-        }
-      ]
+footer: {
+  type: "box",
+  layout: "vertical",
+  contents: [
+    {
+      type: "text",
+      text: `😊 ความพึงพอใจ: ${
+        satisfactionLevel === "excellent"
+          ? "เยี่ยมยอดที่สุด"
+          : satisfactionLevel === "average"
+          ? "พอใช้"
+          : "ควรปรับปรุง"
+      }`,
+      size: "sm",
+      color: "#555555",
+      align: "center",
+      margin: "md",
+      wrap: true
+    },
+    {
+      type: "text",
+      text: "✅ ขอบคุณที่ใช้บริการ",
+      size: "sm",
+      color: "#AAAAAA",
+      align: "center",
+      margin: "md"
     }
+  ]
+}
+
   }
 };
 
