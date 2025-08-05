@@ -663,6 +663,29 @@ if (selectAllCheckbox) {
             console.log("เอกสารที่เลือก: ", selectedDocsDetails);
             console.log("ลายเซ็น: ", imageData);
 
+
+// 📤 ส่งข้อมูลไป Google Apps Script
+const formData = new FormData();
+formData.append("type", "add"); // บอกว่าเป็นการบันทึก
+formData.append("satisfaction", satisfactionLevel); // ระดับความพึงพอใจ
+formData.append("signature", imageData); // ลายเซ็นแบบ dataURL
+formData.append("documents", JSON.stringify(selectedDocsDetails)); // รายการเอกสาร (JSON)
+
+try {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbyd35Ou2TjDEzNUCmiWKrBV0TqPRMjkVdRux42q-uq1MzXKQNNoRXpYTKaFKCR5LpC2/exec", {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await response.json();
+    console.log("✅ บันทึกลงชีตสำเร็จ:", result);
+} catch (err) {
+    console.error("❌ บันทึกลงชีตล้มเหลว:", err);
+    alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + err.message);
+}
+
+
+            
             const flexshowmessage = {
                 type: "flex",
                 altText: "บริการที่รับจากเรา",
