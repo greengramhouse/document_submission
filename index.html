@@ -205,7 +205,7 @@
 
                 <!-- Select All Option -->
                 <div id="selectAllContainer"
-                    class="hidden mt-6 p-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 hidden">
+                    class="hidden mt-6 p-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
                     <label class="flex items-center space-x-3 cursor-pointer">
                         <input type="checkbox" id="selectAll" class="checkbox-custom" />
                         <span class="font-semibold text-gray-700">เลือกทั้งหมด</span>
@@ -394,7 +394,6 @@
   id="card_${index}"
 >
   <div class="flex items-start space-x-4">
-  <p class="text-green-500 text-xs">!คลิกเพื่อเลือกรายการบริการ</p>
     <div class="flex-1">
       <div class="flex items-center space-x-2 mb-3">
         <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -452,24 +451,28 @@
 
                     // Setup select all functionality
                     const selectAllCheckbox = document.getElementById("selectAll");
-                    if (selectAllCheckbox) {
-                        selectAllCheckbox.addEventListener("change", function () {
-                            const checkboxes = document.querySelectorAll('[id^="doc_"]');
-                            const isChecked = this.checked;
+if (selectAllCheckbox) {
+  selectAllCheckbox.addEventListener("change", function () {
+    const checkboxes = document.querySelectorAll('[id^="doc_"]');
+    const isChecked = this.checked;
 
-                            // Clear selected documents array
-                            selectedDocuments = [];
+    // เคลียร์ selectedDocuments ทุกครั้งก่อนเลือกใหม่
+    selectedDocuments = [];
 
-                            checkboxes.forEach((checkbox, index) => {
-                                checkbox.checked = isChecked;
-                                if (isChecked) {
-                                    selectedDocuments.push(index);
-                                }
-                            });
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = isChecked;
+      if (isChecked) {
+        const docId = checkbox.getAttribute("data-doc-id");
+        if (docId) {
+          selectedDocuments.push(docId);
+        }
+      }
+    });
 
-                            console.log("Selected documents:", selectedDocuments);
-                        });
-                    }
+    console.log("Selected documents:", selectedDocuments);
+  });
+}
+
                 })
                 .catch((err) => {
                     docInfoDiv.innerHTML = `
