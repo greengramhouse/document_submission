@@ -234,6 +234,25 @@
 
         <!-- Signature Section -->
         <div class="glass-effect rounded-2xl shadow-xl p-8 animate-slide-up">
+          
+          <div class="mb-6">
+  <label class="block mb-3 font-semibold text-gray-700">
+    กรุณาประเมินความพึงพอใจในการใช้บริการ:
+  </label>
+  <div class="flex items-center space-x-6 justify-center text-4xl">
+    <button onclick="setSatisfaction('excellent')" class="focus:outline-none hover:scale-110 transition-transform" id="smile-excellent">
+      😊
+    </button>
+    <button onclick="setSatisfaction('average')" class="focus:outline-none hover:scale-110 transition-transform" id="smile-average">
+      😐
+    </button>
+    <button onclick="setSatisfaction('poor')" class="focus:outline-none hover:scale-110 transition-transform" id="smile-poor">
+      😞
+    </button>
+  </div>
+  <p id="satisfaction-text" class="text-center text-gray-600 mt-3"></p>
+</div>
+
           <div class="flex items-center space-x-3 mb-6">
             <div
               class="w-8 h-8 bg-gradient-to-r from-green-500 to-teal-600 rounded-lg flex items-center justify-center"
