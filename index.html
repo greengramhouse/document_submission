@@ -166,7 +166,8 @@
               <path d="M6 8h8v2H6V8zm0 4h6v2H6v-2z" />
             </svg>
           </div>
-          <h1 class="text-2xl font-bold">ระบบรับเอกสารดิจิทัล</h1>
+          <h1 class="text-lg font-bold">บริการโดยงานธุรการ</h1>
+          <h1 class="text-md font-bold">โรงเรียนชุมชนวัดไทยงาม</h1>
         </div>
       </div>
     </div>
@@ -226,7 +227,7 @@
             <label class="flex items-center space-x-3 cursor-pointer">
               <input type="checkbox" id="selectAll" class="checkbox-custom" />
               <span class="font-semibold text-gray-700"
-                >เลือกเอกสารทั้งหมด</span
+                >เลือกทั้งหมด</span
               >
             </label>
           </div>
@@ -237,7 +238,7 @@
           
           <div class="mb-6">
   <label class="block mb-3 font-semibold text-gray-700">
-    กรุณาประเมินความพึงพอใจในการใช้บริการ:
+    กรุณาเลือกไอคอนเพื่อประเมินความพึงพอใจในการใช้บริการ:
   </label>
   <div class="flex items-center space-x-6 justify-center text-4xl">
     <button onclick="setSatisfaction('excellent')" class="focus:outline-none hover:scale-110 transition-transform" id="smile-excellent">
@@ -469,7 +470,6 @@
   id="doc_${index}" 
   class="checkbox-custom" 
   onchange="updateSelectedDocuments(${index}, this.checked)"
-  checked
 >
                     </div>
                     <div class="flex-1">
