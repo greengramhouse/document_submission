@@ -393,6 +393,13 @@
   onclick="toggleCardSelection(${index})"
   id="card_${index}"
 ><p class="text-xs text-green-600">คลิกที่นี่! เพื่อเลือกรายการนี้</p>
+<input 
+  type="checkbox" 
+  id="doc_${index}" 
+  class="hidden" 
+  data-doc-id="${doc.submission_id}" 
+>
+
   <div class="flex items-start space-x-4">
     <div class="flex-1">
       <div class="flex items-center space-x-2 mb-3">
@@ -452,25 +459,23 @@
                     // Setup select all functionality
                     const selectAllCheckbox = document.getElementById("selectAll");
 if (selectAllCheckbox) {
-  selectAllCheckbox.addEventListener("change", function () {
-    const checkboxes = document.querySelectorAll('[id^="doc_"]');
-    const isChecked = this.checked;
+selectAllCheckbox.addEventListener("change", function () {
+  const checkboxes = document.querySelectorAll('[id^="doc_"]');
+  const isChecked = this.checked;
 
-    // เคลียร์ selectedDocuments ทุกครั้งก่อนเลือกใหม่
-    selectedDocuments = [];
+  selectedDocuments = [];
 
-    checkboxes.forEach((checkbox) => {
-      checkbox.checked = isChecked;
-      if (isChecked) {
-        const docId = checkbox.getAttribute("data-doc-id");
-        if (docId) {
-          selectedDocuments.push(docId);
-        }
-      }
-    });
-
-    console.log("Selected documents:", selectedDocuments);
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = isChecked;
+    const docId = checkbox.getAttribute("data-doc-id");
+    if (isChecked && docId) {
+      selectedDocuments.push(docId);
+    }
   });
+
+  console.log("Selected documents:", selectedDocuments);
+});
+
 }
 
                 })
@@ -490,21 +495,25 @@ if (selectAllCheckbox) {
         }
 
 function toggleCardSelection(index) {
-  const card = document.getElementById(`card_${index}`);
-  const isSelected = selectedDocuments.includes(index);
+  const checkbox = document.getElementById(`doc_${index}`);
+  if (!checkbox) return;
 
-  if (isSelected) {
-    selectedDocuments = selectedDocuments.filter(i => i !== index);
-    card.classList.remove("bg-blue-50", "border-blue-400");
-    card.classList.add("bg-white", "border-gray-200");
-  } else {
-    selectedDocuments.push(index);
-    card.classList.add("bg-blue-50", "border-blue-400");
-    card.classList.remove("bg-white", "border-gray-200");
+  checkbox.checked = !checkbox.checked;
+
+  const docId = checkbox.getAttribute("data-doc-id");
+  if (!docId) return;
+
+  const idx = selectedDocuments.indexOf(docId);
+
+  if (checkbox.checked && idx === -1) {
+    selectedDocuments.push(docId);
+  } else if (!checkbox.checked && idx > -1) {
+    selectedDocuments.splice(idx, 1);
   }
 
-  console.log("เลือกเอกสาร:", selectedDocuments);
+  console.log("Selected documents:", selectedDocuments);
 }
+
 
         let satisfactionLevel = "";
 
