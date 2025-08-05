@@ -385,96 +385,155 @@
                         .getElementById("selectAllContainer")
                         .classList.remove("hidden");
 
-                    docInfoDiv.innerHTML = docs
-                        .map(
-                            (doc, index) => `
-                <div class="card-hover bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <div class="flex items-start space-x-4">
-                    <div class="flex-shrink-0 pt-1">
-                    <input 
-                    type="checkbox" 
-                    id="doc_${index}" 
-                    class="checkbox-custom" 
-                    onchange="updateSelectedDocuments(${index}, this.checked)"
-                    >
-                    </div>
-                    <div class="flex-1">
-                      <div class="flex items-center space-x-2 mb-3">
-                        <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z"/>
-                          </svg>
-                        </div>
-                        <h4 class="font-bold text-md text-gray-800">${doc.docname || "ไม่ระบุ"
-                                }</h4>
-                      </div>
-                      
-                      <div class="space-y-3">
-                        <div class="flex items-center space-x-2">
-                          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a.997.997 0 01-1.414 0l-7-7A1.997 1.997 0 013 12V7a4 4 0 014-4z"/>
-                          </svg>
-                          <span class="text-gray-600 text-sm"><strong>เรื่อง:</strong> ${doc.title || "ไม่ระบุ"
-                                }</span>
-                        </div>
-                        
-                        <div class="flex items-center space-x-2">
-                          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m4 0H4a1 1 0 00-1 1v10a1 1 0 001 1h16a1 1 0 001-1V8a1 1 0 00-1-1z"/>
-                          </svg>
-                          <span class="text-gray-600 text-sm"><strong>วันที่ฝาก:</strong> ${new Date(
-                                    doc.created_at
-                                ).toLocaleDateString("th-TH")}</span>
-                        </div>
-                        
-                        ${doc.note
-                                    ? `
-                        <div class="flex items-start space-x-2">
-                          <svg class="w-4 h-4 text-gray-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                          </svg>
-                          <span class="text-gray-600 text-sm"><strong>หมายเหตุ:</strong> ${doc.note}</span>
-                        </div>
-                        `
-                                    : ""
-                                }
-                      </div>
-                      
-                      <div class="mt-4 pt-4 border-t border-gray-100">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                          </svg>
-                          พร้อมรับ
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              `
-                        )
-                        .join("");
+docInfoDiv.innerHTML = docs
+    .map((doc, index) => `
+      <div 
+        tabindex="0"
+        role="checkbox" 
+        aria-checked="false"
+        class="doc-card cursor-pointer bg-white rounded-xl border border-gray-300 p-6 shadow-sm hover:shadow-md transition-shadow duration-200 mb-4 flex items-start space-x-4 select-none"
+        data-index="${index}"
+      >
+        <div class="flex-shrink-0 pt-1">
+          <input
+            type="checkbox"
+            id="doc_${index}"
+            class="checkbox-custom h-6 w-6 text-indigo-600 focus:ring-indigo-500 rounded"
+            onchange="updateSelectedDocuments(${index}, this.checked)"
+          />
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center space-x-2 mb-3">
+            <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z"/>
+              </svg>
+            </div>
+            <h4 class="font-semibold text-gray-900 text-lg">${doc.docname || "ไม่ระบุ"}</h4>
+          </div>
 
-                    // Setup select all functionality
-                    const selectAllCheckbox = document.getElementById("selectAll");
-                    if (selectAllCheckbox) {
-                        selectAllCheckbox.addEventListener("change", function () {
-                            const checkboxes = document.querySelectorAll('[id^="doc_"]');
-                            const isChecked = this.checked;
+          <div class="space-y-3 text-gray-600 text-sm">
+            <div class="flex items-center space-x-2">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a.997.997 0 01-1.414 0l-7-7A1.997 1.997 0 013 12V7a4 4 0 014-4z"/>
+              </svg>
+              <span><strong>เรื่อง:</strong> ${doc.title || "ไม่ระบุ"}</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m4 0H4a1 1 0 00-1 1v10a1 1 0 001 1h16a1 1 0 001-1V8a1 1 0 00-1-1z"/>
+              </svg>
+              <span><strong>วันที่ฝาก:</strong> ${new Date(doc.created_at).toLocaleDateString("th-TH")}</span>
+            </div>
+            ${
+              doc.note
+                ? `<div class="flex items-start space-x-2">
+                    <svg class="w-4 h-4 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    <span><strong>หมายเหตุ:</strong> ${doc.note}</span>
+                  </div>`
+                : ""
+            }
+          </div>
 
-                            // Clear selected documents array
-                            selectedDocuments = [];
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              พร้อมรับ
+            </span>
+          </div>
+        </div>
+      </div>
+    `).join("");
 
-                            checkboxes.forEach((checkbox, index) => {
-                                checkbox.checked = isChecked;
-                                if (isChecked) {
-                                    selectedDocuments.push(index);
-                                }
-                            });
+// เพิ่ม event listener ให้การ์ดกดเลือก checkbox ได้ด้วย
 
-                            console.log("Selected documents:", selectedDocuments);
-                        });
-                    }
+setTimeout(() => { // รอให้ DOM สร้างเสร็จก่อน
+  document.querySelectorAll(".doc-card").forEach(card => {
+    const index = parseInt(card.getAttribute("data-index"));
+    const checkbox = document.getElementById(`doc_${index}`);
+    card.addEventListener("click", (e) => {
+      // ป้องกันถ้าคลิกตรง checkbox ให้ทำ checkbox ตัวเดิม
+      if (e.target === checkbox) return;
+      
+      checkbox.checked = !checkbox.checked;
+      updateSelectedDocuments(index, checkbox.checked);
+      updateCardHighlight(card, checkbox.checked);
+    });
+  });
+}, 100);
+
+// ---
+// ฟังก์ชันเพิ่ม/ลบ class เน้น highlight การ์ดเวลาเลือก
+function updateCardHighlight(card, isChecked) {
+  if (isChecked) {
+    card.classList.add("border-indigo-500", "shadow-lg", "bg-indigo-50");
+  } else {
+    card.classList.remove("border-indigo-500", "shadow-lg", "bg-indigo-50");
+  }
+}
+
+// ---
+// อัปเดต updateSelectedDocuments() เพิ่มเรียก updateCardHighlight ด้วย
+
+function updateSelectedDocuments(index, isSelected) {
+  const card = document.querySelector(`.doc-card[data-index="${index}"]`);
+  if (isSelected) {
+    if (!selectedDocuments.includes(index)) {
+      selectedDocuments.push(index);
+    }
+  } else {
+    selectedDocuments = selectedDocuments.filter((i) => i !== index);
+  }
+
+  updateCardHighlight(card, isSelected);
+
+  // Update select all checkbox state
+  const totalCheckboxes =
+    document.querySelectorAll('[id^="doc_"]').length;
+  const selectAllCheckbox = document.getElementById("selectAll");
+  if (selectAllCheckbox && totalCheckboxes > 0) {
+    if (selectedDocuments.length === totalCheckboxes) {
+      selectAllCheckbox.checked = true;
+      selectAllCheckbox.indeterminate = false;
+    } else if (selectedDocuments.length > 0) {
+      selectAllCheckbox.checked = false;
+      selectAllCheckbox.indeterminate = true;
+    } else {
+      selectAllCheckbox.checked = false;
+      selectAllCheckbox.indeterminate = false;
+    }
+  }
+
+  console.log("Selected documents:", selectedDocuments);
+}
+
+// ---
+// และแก้ในส่วน selectAll checkbox listener ให้ highlight ทุกการ์ด
+
+const selectAllCheckbox = document.getElementById("selectAll");
+if (selectAllCheckbox) {
+  selectAllCheckbox.addEventListener("change", function () {
+    const checkboxes = document.querySelectorAll('[id^="doc_"]');
+    const isChecked = this.checked;
+
+    selectedDocuments = [];
+
+    checkboxes.forEach((checkbox, index) => {
+      checkbox.checked = isChecked;
+      const card = document.querySelector(`.doc-card[data-index="${index}"]`);
+      updateCardHighlight(card, isChecked);
+      if (isChecked) {
+        selectedDocuments.push(index);
+      }
+    });
+
+    console.log("Selected documents:", selectedDocuments);
+  });
+}
                 })
                 .catch((err) => {
                     docInfoDiv.innerHTML = `
